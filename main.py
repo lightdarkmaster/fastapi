@@ -20,7 +20,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL = tf.keras.models.load_model("../saved_models/3")
+MODEL = tf.keras.models.load_model("https://drive.google.com/drive/folders/1FOvLG0fTL2SxjxGPIeSHe_whnZypkuJI?usp=sharing")
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy", "Undefined"]
 
