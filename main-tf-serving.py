@@ -12,6 +12,7 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:3000",
+    "https://disease-classification.site/",
 ]
 app.add_middleware(
     CORSMiddleware,
