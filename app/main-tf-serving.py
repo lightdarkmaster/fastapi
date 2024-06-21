@@ -13,8 +13,11 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "https://disease-classification.site",
+    "http://disease-classification.site",
     "http://91.108.104.247",
+    "http://91.108.104.247/predict",
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -66,4 +69,4 @@ async def predict(
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000, ssl_keyfile="key.pem", ssl_certfile="cert.pem")
+    uvicorn.run(app, host="0.0.0.0", port=8000)  # No SSL configuration
