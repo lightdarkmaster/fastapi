@@ -13,7 +13,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "https://disease-classification.site/",
-    "91.108.104.247"
+    "91.108.104.247",
 ]
 app.add_middleware(
     CORSMiddleware,
