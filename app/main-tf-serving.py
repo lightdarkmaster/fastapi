@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import numpy as np
