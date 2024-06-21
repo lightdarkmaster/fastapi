@@ -11,6 +11,8 @@ app = FastAPI()
 origins = [
     "http://localhost",
     "http://localhost:3000",
+    "https://disease-classification.site/",
+    "91.108.104.247",
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -20,7 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MODEL = tf.keras.models.load_model("./saved_models/3")
+#MODEL = tf.keras.models.load_model("./saved_models/3")
+MODEL = tf.keras.models.load_model("../saved_models/3")
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy", "Undefined"]
 
@@ -65,4 +68,4 @@ async def predict(
     }
 
 if __name__ == "__main__":
-    uvicorn.run(app, host='localhost', port=8000)
+    uvicorn.run(app, host='0.0.0.0', port=8000)
