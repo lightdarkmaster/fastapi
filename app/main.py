@@ -12,7 +12,7 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "https://disease-classification.site/",
-    "91.108.104.247",
+    "89.116.20.192",
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -68,5 +68,5 @@ async def predict(
     }
 
 if __name__ == "__main__":
-    #uvicorn.run(app, host='0.0.0.0', port=8000)
-    uvicorn.run(app, host="0.0.0.0", port=8000, ssl_keyfile="key.pem", ssl_certfile="cert.pem")
+    uvicorn.run(app, host='0.0.0.0', port=8000)
+    #uvicorn.run(app, host="0.0.0.0", port=8000, ssl_keyfile="key.pem", ssl_certfile="cert.pem")
