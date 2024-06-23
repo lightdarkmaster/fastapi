@@ -5,7 +5,7 @@ import numpy as np
 from io import BytesIO
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.layers import TFSMLayer
+from tensorflow.keras.models import load_model
 
 app = FastAPI()
 
@@ -14,6 +14,9 @@ origins = [
     "http://localhost:3000",
     "https://disease-classification.site",
     "http://89.116.20.192",
+    "http://89.116.20.192:8000",
+    "http://89.116.20.192:8000/predict",
+    
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -24,7 +27,7 @@ app.add_middleware(
 )
 
 MODEL_PATH = "../saved_models/3"
-model = TFSMLayer(MODEL_PATH, call_endpoint='serving_default')
+model = load_model(MODEL_PATH)
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy", "Undefined"]
 
@@ -35,11 +38,8 @@ async def ping():
 def read_file_as_image(data) -> np.ndarray:
     try:
         image = np.array(Image.open(BytesIO(data)))
-    except Exception as e:
-        try:
-            image = np.array(Image.open(BytesIO(bytes(data))))
-        except Exception as e:
-            raise HTTPException(status_code=400, detail="Invalid image data")
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid image data")
     return image
 
 @app.post("/predict")
@@ -48,11 +48,11 @@ async def predict(file: UploadFile = File(...)):
         image_data = await file.read()
         image = read_file_as_image(image_data)
         img_batch = np.expand_dims(image, 0)
-        
-        predictions = model(img_batch)
+
+        predictions = model.predict(img_batch)
         predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
         confidence = np.max(predictions[0])
-        
+
         return {
             "class": predicted_class,
             "confidence": float(confidence)
