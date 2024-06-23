@@ -13,11 +13,8 @@ origins = [
     "http://localhost",
     "http://localhost:3000",
     "https://disease-classification.site",
-    "http://disease-classification.site",
-    "http://91.108.104.247",
-    "http://91.108.104.247/predict",
+    "http://89.116.20.192",
 ]
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -37,10 +34,8 @@ async def ping():
 
 def read_file_as_image(data) -> np.ndarray:
     try:
-        # Try to open the image using PIL
         image = np.array(Image.open(BytesIO(data)))
     except Exception as e:
-        # If it fails, assume it's a blob and decode it
         try:
             image = np.array(Image.open(BytesIO(bytes(data))))
         except Exception as e:
@@ -48,15 +43,12 @@ def read_file_as_image(data) -> np.ndarray:
     return image
 
 @app.post("/predict")
-async def predict(
-    file: UploadFile = File(...)
-):
+async def predict(file: UploadFile = File(...)):
     try:
         image_data = await file.read()
         image = read_file_as_image(image_data)
         img_batch = np.expand_dims(image, 0)
         
-        # Make predictions using the loaded model
         predictions = model(img_batch)
         predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
         confidence = np.max(predictions[0])
@@ -69,6 +61,4 @@ async def predict(
         raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)  # No SSL configuration
-
-#TODO: need to fix the error in the API
+    uvicorn.run(app, host="0.0.0.0", port=8000)
