@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, HTTPException, UploadFile, requests
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import numpy as np
@@ -39,23 +39,28 @@ def read_file_as_image(data) -> np.ndarray:
         raise HTTPException(status_code=400, detail="Invalid image data")
     return image
 
+
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
-    try:
-        image_data = await file.read()
-        image = read_file_as_image(image_data)
-        img_batch = np.expand_dims(image, 0)
+async def predict(
+    blob_file: bytes = File(...)
+):
+    image = read_file_as_image(blob_file)
+    img_batch = np.expand_dims(image, 0)
 
-        predictions = model(img_batch)
-        predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
-        confidence = np.max(predictions[0])
+    json_data = {
+        "instances": img_batch.tolist()
+    }
 
-        return {
-            "class": predicted_class,
-            "confidence": float(confidence)
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
+    response = requests.post(model, json=json_data)
+    prediction = np.array(response.json()["predictions"][0])
+
+    predicted_class = CLASS_NAMES[np.argmax(prediction)]
+    confidence = np.max(prediction)
+
+    return {
+        "class": predicted_class,
+        "confidence": float(confidence)
+    }
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8000)
