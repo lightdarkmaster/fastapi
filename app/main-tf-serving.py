@@ -5,7 +5,7 @@ import numpy as np
 from io import BytesIO
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.models import load_model
+from tensorflow.keras.layers import TFSMLayer
 
 app = FastAPI()
 
@@ -14,9 +14,6 @@ origins = [
     "http://localhost:3000",
     "https://disease-classification.site",
     "http://89.116.20.192",
-    "http://89.116.20.192:8000",
-    "http://89.116.20.192:8000/predict",
-    
 ]
 app.add_middleware(
     CORSMiddleware,
@@ -27,7 +24,7 @@ app.add_middleware(
 )
 
 MODEL_PATH = "../saved_models/3"
-model = load_model(MODEL_PATH)
+model = TFSMLayer(MODEL_PATH, call_endpoint='serving_default')
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy", "Undefined"]
 
@@ -49,7 +46,7 @@ async def predict(file: UploadFile = File(...)):
         image = read_file_as_image(image_data)
         img_batch = np.expand_dims(image, 0)
 
-        predictions = model.predict(img_batch)
+        predictions = model(img_batch)
         predicted_class = CLASS_NAMES[np.argmax(predictions[0])]
         confidence = np.max(predictions[0])
 
