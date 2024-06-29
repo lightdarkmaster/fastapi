@@ -25,6 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+endpoint = "http://localhost:8501/v1/models/potatoes_model:predict"
 MODEL_PATH = "../saved_models/3"
 #endpoint = "../saved_models/3"
 #model = TFSMLayer(MODEL_PATH, call_endpoint='serving_default')
@@ -51,7 +52,7 @@ async def predict(
         "instances": img_batch.tolist()
     }
 
-    response = requests.post(MODEL_PATH, json=json_data)
+    response = requests.post(endpoint, json=json_data)
     prediction = np.array(response.json()["predictions"][0])
 
     predicted_class = CLASS_NAMES[np.argmax(prediction)]
