@@ -4,10 +4,8 @@ import uvicorn
 import numpy as np
 from io import BytesIO
 from PIL import Image
-import tensorflow as tf
 import requests
-#from keras.layers import TFSMLayer
-
+import tensorflow as tf
 
 app = FastAPI()
 
@@ -17,6 +15,7 @@ origins = [
     "https://disease-classification.site",
     "http://89.116.20.192",
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -27,11 +26,8 @@ app.add_middleware(
 
 endpoint = "http://localhost:8501/v1/models/potatoes_model:predict"
 MODEL_PATH = "../saved_models/3"
-#endpoint = "../saved_models/3"
-#model = TFSMLayer(MODEL_PATH, call_endpoint='serving_default')
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy", "Undefined"]
-
 
 @app.get("/ping")
 async def ping():
@@ -42,9 +38,7 @@ def read_file_as_image(data) -> np.ndarray:
     return image
 
 @app.post("/predict")
-async def predict(
-    file: UploadFile = File(...)
-):
+async def predict(file: UploadFile = File(...)):
     image = read_file_as_image(await file.read())
     img_batch = np.expand_dims(image, 0)
 
