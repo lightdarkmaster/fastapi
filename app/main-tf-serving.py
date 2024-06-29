@@ -1,11 +1,12 @@
-from fastapi import FastAPI, File, HTTPException, UploadFile, requests
+from fastapi import FastAPI, File, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import numpy as np
 from io import BytesIO
 from PIL import Image
 import tensorflow as tf
-from tensorflow.keras.layers import TFSMLayer
+import requests
+
 
 app = FastAPI()
 
@@ -24,34 +25,32 @@ app.add_middleware(
 )
 
 MODEL_PATH = "../saved_models/3"
+endpoint = "../saved_models/3"
 model = TFSMLayer(MODEL_PATH, call_endpoint='serving_default')
 
 CLASS_NAMES = ["Early Blight", "Late Blight", "Healthy", "Undefined"]
+
 
 @app.get("/ping")
 async def ping():
     return "Hello, I am alive"
 
 def read_file_as_image(data) -> np.ndarray:
-    try:
-        image = np.array(Image.open(BytesIO(data)))
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid image data")
+    image = np.array(Image.open(BytesIO(data)))
     return image
-
 
 @app.post("/predict")
 async def predict(
-    blob_file: bytes = File(...)
+    file: UploadFile = File(...)
 ):
-    image = read_file_as_image(blob_file)
+    image = read_file_as_image(await file.read())
     img_batch = np.expand_dims(image, 0)
 
     json_data = {
         "instances": img_batch.tolist()
     }
 
-    response = requests.post(model, json=json_data)
+    response = requests.post(endpoint, json=json_data)
     prediction = np.array(response.json()["predictions"][0])
 
     predicted_class = CLASS_NAMES[np.argmax(prediction)]
