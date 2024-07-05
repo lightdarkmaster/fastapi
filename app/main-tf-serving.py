@@ -63,3 +63,4 @@ if __name__ == "__main__":
 # need to fix the Unprocessable Entity
 # Google Cloud Functions    
 # Use Almalinux
+# Uvicorn in default uses Http protocol.
