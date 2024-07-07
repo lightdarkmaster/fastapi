@@ -7,4 +7,3 @@ uvicorn main-tf-serving:app --reload --host 0.0.0.0
 # need to fix the unprocessable entity error.
 # Need to fix ASAP.. redirect domain to the IP address.
 # I Change to Almalinux
-# No need SSL Certificate
