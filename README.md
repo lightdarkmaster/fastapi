@@ -48,5 +48,5 @@ uvicorn main-tf-serving:app --reload --host 0.0.0.0
 
 # Issues:
 1. Invalid HTTP Request (probable cause is the SSL certificate..)
-    a. uvicorn Library -- only supports http request not https requests (not Secure..)
-    b. code in cameraComponents.js -- functions sendFile();
+2. uvicorn Library -- only supports http request not https requests (not Secure..)
+3. code in cameraComponents.js -- functions sendFile();
