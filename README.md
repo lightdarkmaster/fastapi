@@ -46,8 +46,13 @@ after all intallations run this command
 
 uvicorn main-tf-serving:app --reload --host 0.0.0.0
 
+<<<<<<< HEAD
 # need SSL certificate for the  VPS server2
 # need to fix the unprocessable entity error.
 # Need to fix ASAP.. redirect domain to the IP address.
 # I Change to Almalinux
 # GCF Google cloud platform and Google Cloud Function..
+=======
+1. need SSL certificate for the  VPS server2
+2. need to fix the unprocessable entity error.
+>>>>>>> origin/main
